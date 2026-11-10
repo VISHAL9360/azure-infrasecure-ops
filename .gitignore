@@ -1,0 +1,40 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+terraform.tfvars
+
+# Sensitive files
+*.env
+*.key
+*.pem
+*.cert
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.tmp
+
+# Infracost
+.infracost/
+
+# Node / Portal
+node_modules/
+portal/node_modules/
+portal/.next/
+portal/.vercel/
+dist/
+
+# CI Workflows scope guard
+.github/
+

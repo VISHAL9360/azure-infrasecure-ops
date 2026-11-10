@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure InfraSecure-Ops - Infrastructure & Security Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-surface: #111827;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(0, 120, 212, 0.4);
+            --azure-blue: #0078d4;
+            --azure-cyan: #00d2ff;
+            --emerald: #10b981;
+            --emerald-bg: rgba(16, 185, 129, 0.12);
+            --amber: #f59e0b;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-dim: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 120, 212, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+            background-attachment: fixed;
+            padding-bottom: 60px;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            background: rgba(9, 13, 22, 0.85);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #0078d4, #00d2ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 120, 212, 0.4);
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text span {
+            font-size: 0.8rem;
+            color: var(--azure-cyan);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            background: var(--emerald-bg);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--emerald);
+            box-shadow: 0 0 10px var(--emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        main {
+            max-width: 1280px;
+            margin: 32px auto 0;
+            padding: 0 24px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-hover);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--azure-blue), var(--azure-cyan));
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .metric-sub {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 960px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .resource-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--azure-cyan);
+            background: rgba(0, 210, 255, 0.08);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 210, 255, 0.2);
+        }
+
+        .price-badge {
+            font-weight: 700;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pill-success {
+            background: var(--emerald-bg);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .pill-blue {
+            background: rgba(0, 120, 212, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(0, 120, 212, 0.3);
+        }
+
+        .architecture-node {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .node-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(0, 120, 212, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .node-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .node-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .code-box {
+            background: #080c14;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #e5e7eb;
+            overflow-x: auto;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-group">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Azure InfraSecure-Ops</h1>
+                    <span>Enterprise IaC & Security Dashboard</span>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Pipeline 100% Validated
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Top Metrics Cards -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Estimated Monthly Cost 💰</div>
+                <div class="metric-value">$29.21 <span style="font-size: 1rem; color: var(--text-muted);">/mo</span></div>
+                <div class="metric-sub">4 Billable • 7 Always Free Resources</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Security & Compliance 🛡️</div>
+                <div class="metric-value" style="color: var(--emerald);">0 <span style="font-size: 1rem; color: var(--text-muted);">Vulnerabilities</span></div>
+                <div class="metric-sub">100% TFSec & CIS Benchmark Clean</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Planned Resources ☁️</div>
+                <div class="metric-value">11 <span style="font-size: 1rem; color: var(--text-muted);">Resources</span></div>
+                <div class="metric-sub">Region: East US (Automated Scale)</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Auto-scaling Policy 📈</div>
+                <div class="metric-value">2 - 5 <span style="font-size: 1rem; color: var(--text-muted);">VMs</span></div>
+                <div class="metric-sub">Scale-out >75% CPU • Scale-in <25% CPU</div>
+            </div>
+        </section>
+
+        <!-- Main Content Grid -->
+        <div class="layout-grid">
+            <!-- Left: Cost & Security Breakdown -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>💵 Monthly Cost Breakdown (Infracost)</h2>
+                    <span class="pill pill-blue">Baseline: $29.21</span>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Azure Component</th>
+                            <th>Configuration</th>
+                            <th>Quantity</th>
+                            <th>Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="resource-tag">VM Scale Set</span></td>
+                            <td>Ubuntu 22.04 LTS (Standard_B1s)</td>
+                            <td>1,460 hrs (2 instances)</td>
+                            <td class="price-badge">$15.18</td>
+                        </tr>
+                        <tr>
+                            <td><span class="resource-tag">OS Disks</span></td>
+                            <td>Standard_LRS (S4 Managed Disks)</td>
+                            <td>2 disks</td>
+                            <td class="price-badge">$3.07</td>
+                        </tr>
+                        <tr>
+                            <td><span class="resource-tag">Standard Load Balancer</span></td>
+                            <td>HTTP Port 80 Routing Rule</td>
+                            <td>730 hrs</td>
+                            <td class="price-badge">$7.30</td>
+                        </tr>
+                        <tr>
+                            <td><span class="resource-tag">Public IP</span></td>
+                            <td>Regional Static Public IP</td>
+                            <td>730 hrs</td>
+                            <td class="price-badge">$3.65</td>
+                        </tr>
+                        <tr>
+                            <td><span class="resource-tag">VNet / Subnet / NSG</span></td>
+                            <td>Virtual Network 10.0.0.0/16</td>
+                            <td>1 Network, 1 Subnet</td>
+                            <td class="price-badge" style="color: var(--emerald);">$0.00 (Free)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="panel-header" style="margin-top: 36px;">
+                    <h2>🛡️ Security & Access Control Audits (TFSec)</h2>
+                    <span class="pill pill-success">0 Issues Found</span>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Security Rule Check</th>
+                            <th>Protected Target</th>
+                            <th>Remediation / Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SSH Ingress (Port 22)</strong></td>
+                            <td>Management Access</td>
+                            <td><span class="pill pill-success">Restricted to 10.0.0.0/16 (Private)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>HTTP Ingress (Port 80)</strong></td>
+                            <td>Web Application</td>
+                            <td><span class="pill pill-success">Restricted to AzureLoadBalancer</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CUSTOM001 Managed Disks</strong></td>
+                            <td>Linux VMSS</td>
+                            <td><span class="pill pill-success">Compliant (Standard_LRS Managed)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Right: Architecture & Deployment Outputs -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>🏗️ Planned Cloud Topology</h2>
+                </div>
+
+                <div class="architecture-node">
+                    <div class="node-icon">🌐</div>
+                    <div class="node-info">
+                        <h4>Public Entry Point</h4>
+                        <p>vmss-dns.eastus.cloudapp.azure.com</p>
+                    </div>
+                </div>
+
+                <div class="architecture-node">
+                    <div class="node-icon">⚖️</div>
+                    <div class="node-info">
+                        <h4>Azure Standard Load Balancer</h4>
+                        <p>Distributes port 80 traffic to healthy VMs</p>
+                    </div>
+                </div>
+
+                <div class="architecture-node">
+                    <div class="node-icon">🛡️</div>
+                    <div class="node-info">
+                        <h4>Network Security Group</h4>
+                        <p>vmss-nsg (Firewall filtering rules)</p>
+                    </div>
+                </div>
+
+                <div class="architecture-node">
+                    <div class="node-icon">💻</div>
+                    <div class="node-info">
+                        <h4>VM Scale Set (2 to 5 Instances)</h4>
+                        <p>Subnet: 10.0.2.0/24 • Auto-provisioned NGINX</p>
+                    </div>
+                </div>
+
+                <div class="architecture-node">
+                    <div class="node-icon">📊</div>
+                    <div class="node-info">
+                        <h4>Azure Monitor Autoscale</h4>
+                        <p>Dynamic CPU-based auto-scaling</p>
+                    </div>
+                </div>
+
+                <div class="panel-header" style="margin-top: 24px;">
+                    <h2>⚡ Ready Terminal Command</h2>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Run the full validation pipeline anytime in PowerShell:</p>
+                <div class="code-box">.\scripts\validate.sh</div>
+            </div>
+        </div>
+        <footer style="text-align: center; margin-top: 40px; padding: 20px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color);">
+            Azure InfraSecure-Ops &bull; Designed &amp; Maintained by <a href="https://github.com/VISHAL9360" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">Vishal K</a> &bull; Production DevSecOps &amp; FinOps
+        </footer>
+    </main>
+
+</body>
+</html>

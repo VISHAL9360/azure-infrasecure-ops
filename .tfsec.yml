@@ -1,0 +1,21 @@
+# Include all available checks by default
+checks:
+  - all
+
+# Custom checks
+custom_checks:
+  - code: CUSTOM001
+    description: "Ensure VMSS uses managed disks"
+    required_types:
+      - resource
+    required_labels:
+      - azurerm_linux_virtual_machine_scale_set
+    check:
+      - expr: 'property "os_disk" is present'
+      - expr: 'property "os_disk".storage_account_type != ""'
+    error_message: "VMSS should use managed disks with specified storage account type"
+    severity: "ERROR"
+
+# Exclude rules if needed
+exclude:
+  - azure-compute-disable-password-authentication

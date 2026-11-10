@@ -1,0 +1,33 @@
+[1mProject:[22m main
+
+ [4mName[24m                                                           [4mMonthly Qty[24m  [4mUnit[24m                      [4mMonthly Cost[24m   
+                                                                                                                      
+ [1mazurerm_linux_virtual_machine_scale_set.main[22m                                                                         
+ [2m├─[22m Instance usage (Linux, pay as you go, Standard_B1s)               1,460  hours                           $15.18   
+ [2m└─[22m os_disk                                                                                                           
+ [2m   ├─[22m Storage (S4, LRS)                                                  2  months                           $3.07   
+ [2m   └─[22m Disk operations                                   Monthly cost depends on usage: $0.0005 per 10k operations    
+                                                                                                                      
+ [1mazurerm_lb_rule.main[22m                                                                                                 
+ [2m└─[22m Rule usage                                                          730  hours                            $7.30   
+                                                                                                                      
+ [1mazurerm_public_ip.main[22m                                                                                               
+ [2m└─[22m IP address (static, regional)                                       730  hours                            $3.65   
+                                                                                                                      
+ [1mazurerm_lb.main[22m                                                                                                      
+ [2m└─[22m Data processed                                       Monthly cost depends on usage: $0.005 per GB                 
+                                                                                                                      
+[1m OVERALL TOTAL[22m                                                                                              $29.21 
+
+*Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
+
+──────────────────────────────────
+11 cloud resources were detected:
+∙ 4 were estimated
+∙ 7 were free
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
+┃ main                                               ┃           $29 ┃           - ┃        $29 ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛

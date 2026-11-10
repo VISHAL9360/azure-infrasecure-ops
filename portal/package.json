@@ -1,0 +1,30 @@
+{
+  "name": "azure-sentinel-scale-portal",
+  "version": "1.0.0",
+  "description": "Enterprise Azure Infrastructure Operations & Security Portal (Next.js 16 + React 19 + Three.js + Framer Motion)",
+  "author": "Vishal K <rajivishal2020@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VISHAL9360/azure-infrasecure-ops.git"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.4",
+    "framer-motion": "^13.4.4",
+    "lucide-react": "^1.48.0",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6"
+  }
+}
